@@ -42,7 +42,7 @@ async function main() {
 //     if (!msg) {
 //       return;
 //     }
-//     console.log("msg >>>");
+//     console.log("msg >>>", msg.content.toString());
 //     ch.ack(msg);
 //   });
 // }
@@ -78,15 +78,15 @@ async function main() {
 //     if (!msg) {
 //       return;
 //     }
-//     try {
+//     // try {
+//     if (msg.content.toString() === "error") {
 //       console.error("ERRORE!!!!");
-//       if (msg.content.toString() === "error") {
-//         throw new Error();
-//       }
-//       console.log("msg >>>");
-//     } catch (error) {
-//       console.error("Errore >>>", error);
+//       throw new Error();
 //     }
+//     console.log("msg >>>", msg.content.toString());
+//     // } catch (error) {
+//     //   console.error("Errore >>>", error);
+//     // }
 //     ch.ack(msg);
 //   });
 // }
@@ -203,11 +203,15 @@ async function main() {
 //       console.log("msg ack!");
 //       ch.ack(msg);
 //     } catch (error) {
+//       // OLD behaviour
 //       // console.log(">>> Trapped exception nack");
 //       // ch.nack(msg, false, !msg.fields.redelivered);
+
+//       // We can get this behaviour also with policy
 //       // const deliveryCount = msg.properties.headers["x-delivery-count"] || 0;
 //       // console.log(">>> Trapped exception nack", deliveryCount);
 //       // ch.nack(msg, false, deliveryCount < 10);
+
 //       console.log(">>> Trapped exception nack");
 //       ch.nack(msg, false, true);
 //     }

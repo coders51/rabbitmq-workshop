@@ -74,7 +74,7 @@ async function main() {
 // }
 
 /**
- * Send and close
+ * Send and close, is the message lost?
  */
 // async function main() {
 //   const conn = await connect("amqp://localhost");
@@ -87,7 +87,8 @@ async function main() {
 // }
 
 /**
- * Publish confirmation
+ * Publish confirmation - Wait for confirmation from rabbit sometimes
+ * see also the performance changing the frequency of `waitForConfirms`
  */
 // async function main() {
 //   const conn = await connect("amqp://localhost");

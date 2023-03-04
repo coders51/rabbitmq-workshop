@@ -2,7 +2,7 @@ version: "2"
 
 services:
   rabbitmq-workshop:
-    image: rabbitmq:3.10-management
+    image: rabbitmq:3.11-management
     container_name: rabbitmq-workshop
     restart: unless-stopped
     hostname: "rabbitmq"
