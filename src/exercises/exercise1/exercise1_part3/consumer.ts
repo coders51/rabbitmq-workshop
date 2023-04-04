@@ -12,7 +12,10 @@ export function wait(timeout: number) {
   });
 }
 
+//argument -> key [1, 2, 3]
 async function main() {
+  const args = process.argv.slice(2);
+  var key = args.length == 1 ? args[0] : "";
   const connection = await connect("amqp://localhost");
   const channel = await connection.createChannel();
   const exchangeName = "exchangeDirect";
@@ -22,13 +25,17 @@ async function main() {
     durable: false,
   });
   console.log(
-    " [*] Waiting for messages in " + queue + " - To exit press CTRL+C"
+    " [*] Waiting for messages in queue:" +
+      queue +
+      ", key: " +
+      key +
+      " - To exit press CTRL+C"
   );
-  channel.bindQueue(queue, "exchangeDirect", "");
+  channel.bindQueue(queue, exchangeName, key);
   channel.consume(queue, msg => console.log(msg?.content.toString()));
 }
 
 main().then(
-  () => console.log("Program terminated!"),
+  () => console.log("Ok"),
   err => console.log("Error: ", err)
 );
