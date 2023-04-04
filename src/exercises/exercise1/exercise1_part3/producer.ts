@@ -17,10 +17,14 @@ async function main() {
   const channel = await connection.createChannel();
   const exchangeName = "exchangeDirect";
   await channel.assertExchange(exchangeName, "direct");
+  let cont = 0;
   while (true) {
-    const msg = `msg`;
-    channel.publish(exchangeName, "", Buffer.from(msg));
-    console.log("Sent: ", msg);
+    if (cont == 3) cont = 1;
+    else cont++;
+    const msg = `messaggio` + cont;
+    const rk = cont;
+    channel.publish(exchangeName, rk.toString(), Buffer.from(msg));
+    console.log("Sent: ", msg, "with key = " + rk);
     await wait(1000);
   }
   await connection.close();
