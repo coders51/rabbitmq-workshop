@@ -1,10 +1,7 @@
-import { connect, ConsumeMessage } from "amqplib";
+import { connect } from "amqplib";
 import { random } from "lodash";
 
 random();
-export function yyz(m: ConsumeMessage) {
-  console.log(m);
-}
 
 export function wait(timeout: number) {
   return new Promise((res, _) => {
@@ -17,11 +14,14 @@ async function main() {
   const channel = await connection.createChannel();
   const exchangeName = "exchangeDirect";
   await channel.assertExchange(exchangeName, "direct");
+  let count = 0;
   while (true) {
-    const msg = `msg`;
-    channel.publish(exchangeName, "", Buffer.from(msg));
-    console.log("Sent: ", msg);
+    const message = `Message${count + 1}`;
+    const rk = `rk${count + 1}`;
+    channel.publish(exchangeName, rk, Buffer.from(message));
+    console.log("Sent: " + message + " . With rk: " + rk);
     await wait(1000);
+    count = (count + 1) % 3;
   }
   await connection.close();
 }
