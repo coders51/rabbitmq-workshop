@@ -15,16 +15,7 @@ async function main() {
   await channel.assertExchange(exchangeName, "fanout");
   //in case multiple consumer instances are created,
   //each instance will have a temporary queue from which it will receive all messages sent by the producer
-  const { queue } = await channel.assertQueue("", {
-    autoDelete: true,
-    durable: false,
-  });
-  //in case multiple consumer instances are created,
-  //each instance will be associated with the same queue in which it will receive messages sent by the producer in an alternating manner
-  /* const { queue } = await channel.assertQueue("queueName", {
-    autoDelete: true,
-    durable: false,
-  }); */
+  const { queue } = await channel.assertQueue("", { autoDelete: true, durable: false });
   console.log(
     " [*] Waiting for messages in queue: " + queue + " - To exit press CTRL+C"
   );
