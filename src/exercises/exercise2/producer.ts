@@ -1,10 +1,7 @@
-import { connect, ConsumeMessage } from "amqplib";
+import { connect } from "amqplib";
 import { random } from "lodash";
 
 random();
-export function yyz(m: ConsumeMessage) {
-  console.log(m);
-}
 
 export function wait(timeout: number) {
   return new Promise((res, _) => {
