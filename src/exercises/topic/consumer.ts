@@ -1,5 +1,6 @@
 import { connect } from "amqplib";
 import { random } from "lodash";
+import yargs from "yargs";
 
 random();
 
@@ -9,30 +10,28 @@ export function wait(timeout: number) {
   });
 }
 async function main() {
-  const args = process.argv.slice(2);
-  if (args.length == 0) {
-    console.log(
-      "You have to pass the topics in the args: <name>.<type>.<event>\n If you typed '#' for everything try with $#\n"
-    );
-    process.exit(1);
-  }
+  const argv = yargs(process.argv.slice(2))
+    .options({
+      queue: { type: "string", default: "q1" },
+      topic: { type: "string", default: "#" },
+    })
+    .parseSync();
   const connection = await connect("amqp://localhost");
   const channel = await connection.createChannel();
   const exchangeName = "topicExchange";
   await channel.assertExchange(exchangeName, "topic");
-  const { queue } = await channel.assertQueue("", {
-    autoDelete: true,
-    durable: false,
+  const { queue } = await channel.assertQueue(argv.queue, {
+    autoDelete: false,
+    durable: true,
   });
-  args.forEach(function (key) {
-    if (key === "$#") key = "#";
-    channel.bindQueue(queue, exchangeName, key);
-    console.log(
-      " [*] Waiting for messages with topic: ",
-      key,
-      " - To exit press CTRL+C"
-    );
-  });
+  channel.bindQueue(queue, exchangeName, argv.topic);
+  console.log(
+    " [*] Waiting for messages with topic:",
+    argv.topic,
+    "on queue",
+    queue,
+    " - To exit press CTRL+C"
+  );
   channel.consume(queue, msg => console.log(msg?.content.toString()));
 }
 
