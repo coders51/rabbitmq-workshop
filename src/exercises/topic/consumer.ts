@@ -20,18 +20,9 @@ async function main() {
   const channel = await connection.createChannel();
   const exchangeName = "topicExchange";
   await channel.assertExchange(exchangeName, "topic");
-  const { queue } = await channel.assertQueue(argv.queue, {
-    autoDelete: false,
-    durable: true,
-  });
+  const { queue } = await channel.assertQueue(argv.queue, { autoDelete: false, durable: true });
   channel.bindQueue(queue, exchangeName, argv.topic);
-  console.log(
-    " [*] Waiting for messages with topic:",
-    argv.topic,
-    "on queue",
-    queue,
-    " - To exit press CTRL+C"
-  );
+  console.log("[*] Waiting for messages with topic:", argv.topic, "on queue", queue," - To exit press CTRL+C");
   channel.consume(queue, msg => console.log(msg?.content.toString()));
 }
 
