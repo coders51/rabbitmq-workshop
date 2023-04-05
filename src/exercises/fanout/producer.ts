@@ -14,15 +14,14 @@ async function main() {
   const channel = await connection.createChannel();
   const exchangeName = "fanoutExchange";
   await channel.assertExchange(exchangeName, "fanout");
-  let cont = 0;
+  let count = 0;
   while (true) {
-    if (cont == 3) cont = 1;
-    else cont++;
-    const msg = `messaggio` + cont;
-    const rk = cont;
-    channel.publish(exchangeName, rk.toString(), Buffer.from(msg));
-    console.log("Sent: ", msg, "with key = " + rk);
+    const message = `Message${count + 1}`;
+    const rk = `rk${count + 1}`;
+    channel.publish(exchangeName, rk.toString(), Buffer.from(message));
+    console.log("Sent:", message, "with rk = " + rk);
     await wait(1000);
+    count = (count + 1) % 3;
   }
   await connection.close();
 }

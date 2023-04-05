@@ -13,15 +13,15 @@ async function main() {
   const channel = await connection.createChannel();
   const exchangeName = "fanoutExchange";
   await channel.assertExchange(exchangeName, "fanout");
-  //se creo più istanze di consumer ognuna con una coda differente
-  //ognuna riceverà tutti i messaggi del producer
+  //in case multiple consumer instances are created,
+  //each instance will have a temporary queue from which it will receive all messages sent by the producer
   const { queue } = await channel.assertQueue("", {
     autoDelete: true,
     durable: false,
   });
-  //se invece creo più istanze di consumer e associo a tutte la stessa coda
-  //riceveranno i messaggi del producer in modo alternato
-  /* const { queue } = await channel.assertQueue("nomeCoda", {
+  //in case multiple consumer instances are created,
+  //each instance will be associated with the same queue in which it will receive messages sent by the producer in an alternating manner
+  /* const { queue } = await channel.assertQueue("queueName", {
     autoDelete: true,
     durable: false,
   }); */
