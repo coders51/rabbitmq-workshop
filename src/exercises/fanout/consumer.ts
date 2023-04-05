@@ -16,9 +16,7 @@ async function main() {
   //in case multiple consumer instances are created,
   //each instance will have a temporary queue from which it will receive all messages sent by the producer
   const { queue } = await channel.assertQueue("", { autoDelete: true, durable: false });
-  console.log(
-    " [*] Waiting for messages in queue: " + queue + " - To exit press CTRL+C"
-  );
+  console.log(" [*] Waiting for messages in queue: " + queue + " - To exit press CTRL+C");
   channel.bindQueue(queue, exchangeName, "");
   channel.consume(queue, msg => console.log(msg?.content.toString()));
 }
