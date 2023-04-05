@@ -19,7 +19,7 @@ async function main() {
     const message = `Message${count + 1}`;
     const rk = `rk${count + 1}`;
     channel.publish(exchangeName, rk, Buffer.from(message));
-    console.log("Sent: " + message + " . With rk: " + rk);
+    console.log(`Sent: ${message} - with rk: ${rk}`);
     await wait(1000);
     count = (count + 1) % 3;
   }
