@@ -14,11 +14,12 @@ async function main() {
   const argv = yargs(process.argv.slice(2))
     .options({
       order: { type: "string", default: "orderName" },
+      exchange: { type: "string", default: "orderExchange" },
     })
     .parseSync();
   const connection = await connect("amqp://localhost");
   const channel = await connection.createChannel();
-  const exchangeName = "orderExchange";
+  const exchangeName = argv.exchange;
   await channel.assertExchange(exchangeName, "topic");
 
   while (true) {
