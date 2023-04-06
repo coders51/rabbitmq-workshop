@@ -24,12 +24,13 @@ async function main() {
   console.log(" [*] Waiting for orders in: " + queue + " - To exit press CTRL+C");
   channel.bindQueue(queue, exchangeName, argv.rk);
   channel.consume(queue, (msg) => {
-    if(msg){
-        const order = JSON.parse(msg.content.toString()); 
+    if(!msg){
+        return;
+    }
+    const order = JSON.parse(msg.content.toString()); 
         console.log(`Order: ${order.orderId} - total: ${order.total}`); 
         wait(1500);
         channel.ack(msg);
-    }
 });
   
 }

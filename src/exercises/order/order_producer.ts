@@ -28,7 +28,7 @@ async function main() {
     const jsonMessage = JSON.stringify(message);
     const rk = `rk${count + 1}`;
     channel.publish(exchangeName, rk.toString(), Buffer.from(jsonMessage));
-    console.log("Sent order: " + argv.order + ", id: " + orderId +  ", rk: " + rk);
+    console.log("Sent order: " + argv.order + ", id: " + orderId + ", total: " + total +  ", rk: " + rk);
     await wait(1000);
     count = (count + 1) % 3;
   }
