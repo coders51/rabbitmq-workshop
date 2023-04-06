@@ -18,19 +18,18 @@ async function main() {
     .parseSync();
   const connection = await connect("amqp://localhost");
   const channel = await connection.createChannel();
-  const exchangeName = "orderEx";
-  await channel.assertExchange(exchangeName, "fanout");
-  let count = 0;
+  const exchangeName = "orderExchange";
+  await channel.assertExchange(exchangeName, "topic");
+
   while (true) {
-    let orderId = random(1000, 10000)
-    let total = random(1,50)
+    let orderId = random(1000, 10000);
+    let total = random(1, 50);
     const message = { type: argv.order, orderId: orderId, total: total };
     const jsonMessage = JSON.stringify(message);
-    const rk = `rk${count + 1}`;
-    channel.publish(exchangeName, rk.toString(), Buffer.from(jsonMessage));
-    console.log("Sent order: " + argv.order + ", id: " + orderId + ", total: " + total +  ", rk: " + rk);
+    const rk = argv.order;
+    channel.publish(exchangeName, rk, Buffer.from(jsonMessage));
+    console.log("Sent order id: " + orderId + ", total: " + total + ", rk: " + rk );
     await wait(1000);
-    count = (count + 1) % 3;
   }
   await connection.close();
 }
