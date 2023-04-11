@@ -1,5 +1,5 @@
 import { connect } from "amqplib";
-import { random, } from "lodash";
+import { random } from "lodash";
 import yargs from "yargs";
 
 random();
@@ -22,15 +22,15 @@ async function main() {
   const exchangeName = argv.exchange;
   await channel.assertExchange(exchangeName, "topic");
   while (true) {
-    let orderId = random(1000, 10000)
-    let total = random(1,100)
+    let orderId = random(1000, 10000);
+    let total = random(1, 100);
     const message = { type: argv.order, orderId: orderId, total: total };
     const jsonMessage = JSON.stringify(message);
     const rk = argv.order;
     channel.publish(exchangeName, rk, Buffer.from(jsonMessage), {
       persistent: true,
     });
-    console.log("Sent order id: " + orderId + ", total: " + total + ", rk: " + rk );
+    console.log("Sent order id: " + orderId + ", total: " + total + ", rk: " + rk);
     await wait(1000);
     await channel.waitForConfirms();
   }
