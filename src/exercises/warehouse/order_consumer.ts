@@ -25,17 +25,29 @@ async function main() {
     arguments: { "x-queue-type": "quorum" },
   });
   channel.bindQueue(queue, exchangeName, "order_inserted");
+  channel.bindQueue(queue, exchangeName, "order_amended");
   channel.consume(queue, msg => {
     if (!msg) {
       return;
     }
-    let orderId = random(1000, 10000);
-    let level = random(1, 100) > 60 ? "urgent" : "normal";
-    const message = { type: "prepare_order", orderId: orderId, level: level };
-    console.log(message);
-    const jsonMessage = JSON.stringify(message);
-    const rk = "prepare_order";
-    channel.publish(exchangeName, rk, Buffer.from(jsonMessage));
+    const order = JSON.parse(msg.content.toString());
+    if (order.type == "order_inserted") {
+      let orderId = random(1000, 10000);
+      let level = random(1, 100) > 60 ? "urgent" : "normal";
+      const message = { type: "prepare_order", orderId: orderId, level: level };
+      console.log(message);
+      const jsonMessage = JSON.stringify(message);
+      const rk = "prepare_order";
+      channel.publish(exchangeName, rk, Buffer.from(jsonMessage));
+    } else {
+      let orderId = order.orderId;
+      let level = random(1, 100) > 60 ? "urgent" : "normal";
+      const message = { type: "amended_shipment", orderId: orderId, level: level };
+      console.log(message);
+      const jsonMessage = JSON.stringify(message);
+      const rk = "amended_shipment";
+      channel.publish(exchangeName, rk, Buffer.from(jsonMessage));
+    }
   });
 }
 

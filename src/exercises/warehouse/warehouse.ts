@@ -25,23 +25,26 @@ async function main() {
     arguments: { "x-queue-type": "quorum" },
   });
   channel.bindQueue(queue, exchangeName, "prepare_order");
+  channel.bindQueue(queue, exchangeName, "amended_shipment");
   channel.consume(queue, async msg => {
     if (!msg) {
       return;
     }
     const order = JSON.parse(msg.content.toString());
-    if (order.level === "urgent") {
-      console.log(order.orderId, order.level);
-      const message = { type: "prepare_shipped", orderId: order.orderId, level: order.level };
+    if (order.level === "normal") {
+      await wait(random(1000, 5000));
+    }
+    if (order.type == "amended_shipment") {
+      console.log("shipment_amended", order.orderId, order.level);
+      const message = { type: "shipment_amended", orderId: order.orderId };
       const jsonMessage = JSON.stringify(message);
-      const rk = "prepare_shipped";
+      const rk = "shipment_amended";
       channel.publish(exchangeName, rk, Buffer.from(jsonMessage));
     } else {
-      await wait(random(1, 5));
       console.log(order.orderId, order.level);
-      const message = { type: "prepare_shipped", orderId: order.orderId, level: order.level };
+      const message = { type: "order_shipped", orderId: order.orderId, level: order.level };
       const jsonMessage = JSON.stringify(message);
-      const rk = "prepare_shipped";
+      const rk = "order_shipped";
       channel.publish(exchangeName, rk, Buffer.from(jsonMessage));
     }
   });

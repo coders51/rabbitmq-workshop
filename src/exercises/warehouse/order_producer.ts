@@ -22,10 +22,21 @@ async function main() {
   await channel.assertExchange(exchangeName, "topic");
 
   while (true) {
-    const message = "inserted a new order";
-    const rk = "order_inserted";
-    channel.publish(exchangeName, rk, Buffer.from(message));
-    console.log("New order inserted");
+    if (random(1, 50) % 2 == 0) {
+      let orderId = random(1000, 10000);
+      let total = random(1, 50);
+      const message = { type: "order_amended", orderId: orderId, total: total };
+      const jsonMessage = JSON.stringify(message);
+      const rk = "order_amended";
+      channel.publish(exchangeName, rk, Buffer.from(jsonMessage));
+      console.log("Order amended");
+    } else {
+      const message = { type: "order_inserted" };
+      const jsonMessage = JSON.stringify(message);
+      const rk = "order_inserted";
+      channel.publish(exchangeName, rk, Buffer.from(jsonMessage));
+      console.log("New order inserted");
+    }
     await wait(1000);
   }
   await connection.close();
