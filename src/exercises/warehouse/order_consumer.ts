@@ -34,7 +34,13 @@ async function main() {
     if (order.type == "order_inserted") {
       let orderId = random(1000, 10000);
       let level = random(1, 100) > 60 ? "urgent" : "normal";
-      const message = { type: "prepare_order", orderId: orderId, level: level };
+      let total = random(1, 50);
+      const message = {
+        type: "prepare_order",
+        orderId: orderId,
+        level: level,
+        total: total,
+      };
       console.log(message);
       const jsonMessage = JSON.stringify(message);
       const rk = "prepare_order";
@@ -42,7 +48,12 @@ async function main() {
     } else {
       let orderId = order.orderId;
       let level = random(1, 100) > 60 ? "urgent" : "normal";
-      const message = { type: "amended_shipment", orderId: orderId, level: level };
+      const message = {
+        type: "amended_shipment",
+        orderId: orderId,
+        level: level,
+        total: order.total,
+      };
       console.log(message);
       const jsonMessage = JSON.stringify(message);
       const rk = "amended_shipment";
