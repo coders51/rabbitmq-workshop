@@ -31,7 +31,7 @@ async function main() {
     const message = { type: "prepare_order", orderId: order.orderId, level: order.level, total: order.total };
     console.log(message);
     const jsonMessage = JSON.stringify(message);
-    const rk = "prepare_order";
+    const rk = "prepare_order_" + order.level;
     channel.publish(exchangeName, rk, Buffer.from(jsonMessage), { timestamp: Date.now() });
   });
   channel.consume(amendedOrderQueue, msg => {
