@@ -13,7 +13,7 @@ async function main() {
   let total_amended = 0;
   const argv = yargs(process.argv.slice(2))
     .options({
-      queue: { type: "string", default: "q1" },
+      queue: { type: "string", default: "malfunctionStream" },
     })
     .parseSync();
   const connection = await connect("amqp://localhost");
@@ -21,19 +21,26 @@ async function main() {
   const exchangeName = "shipmentExchange";
   await channel.assertExchange(exchangeName, "topic");
   const { queue } = await channel.assertQueue(argv.queue, {
-    autoDelete: false,
     durable: true,
-    arguments: { "x-queue-type": "quorum" },
+    exclusive: false,
+    autoDelete: false,
+    arguments: { "x-queue-type": "stream" },
   });
   channel.bindQueue(queue, exchangeName, "order_amended");
-  channel.consume(queue, async msg => {
-    if (!msg) {
-      return;
-    }
-    const order = JSON.parse(msg.content.toString());
-    if (order.type == "order_amended") total_amended++;
-    console.log("Total amended orders: " + total_amended);
-  });
+  await channel.prefetch(1);
+  channel.consume(
+    queue,
+    async msg => {
+      if (!msg) {
+        return;
+      }
+      const order = JSON.parse(msg.content.toString());
+      if (order.type == "order_amended") total_amended++;
+      console.log("Total amended orders: " + total_amended);
+      channel.ack(msg, false);
+    },
+    { arguments: { "x-stream-offset": "first" } }
+  );
 }
 
 main().then(
