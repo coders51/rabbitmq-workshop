@@ -1,6 +1,5 @@
 import { Channel, connect } from "amqplib";
 import { random } from "lodash";
-import yargs from "yargs";
 
 random();
 
@@ -32,14 +31,9 @@ async function sendOrderInserted(channel: Channel, exchangeName: string) {
   console.log("New order inserted");
 }
 async function main() {
-  const argv = yargs(process.argv.slice(2))
-    .options({
-      exchange: { type: "string", default: "shipmentExchange" },
-    })
-    .parseSync();
   const connection = await connect("amqp://localhost");
   const channel = await connection.createChannel();
-  const exchangeName = argv.exchange;
+  const exchangeName = "shipmentExchange";
   await channel.assertExchange(exchangeName, "topic");
   while (true) {
     if (random(1, 50) % 2 == 0) {

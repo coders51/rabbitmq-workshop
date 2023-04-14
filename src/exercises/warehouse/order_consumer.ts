@@ -1,6 +1,5 @@
 import { connect } from "amqplib";
 import { random } from "lodash";
-import yargs from "yargs";
 
 random();
 
@@ -33,7 +32,7 @@ async function main() {
     console.log(message);
     const jsonMessage = JSON.stringify(message);
     const rk = "prepare_order";
-    channel.publish(exchangeName, rk, Buffer.from(jsonMessage));
+    channel.publish(exchangeName, rk, Buffer.from(jsonMessage), { timestamp: Date.now() });
   });
   channel.consume(amendedOrderQueue, msg => {
     if (!msg) return;
