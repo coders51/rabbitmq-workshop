@@ -4,11 +4,6 @@ import yargs from "yargs";
 
 random();
 
-export function wait(timeout: number) {
-  return new Promise((res, _) => {
-    return setTimeout(res, timeout);
-  });
-}
 async function main() {
   let total_amount = 0;
   const argv = yargs(process.argv.slice(2))

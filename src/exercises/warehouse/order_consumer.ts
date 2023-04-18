@@ -3,11 +3,6 @@ import { random } from "lodash";
 
 random();
 
-export function wait(timeout: number) {
-  return new Promise((res, _) => {
-    return setTimeout(res, timeout);
-  });
-}
 async function main() {
   const connection = await connect("amqp://localhost");
   const channel = await connection.createChannel();

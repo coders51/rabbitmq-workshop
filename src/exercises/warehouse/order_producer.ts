@@ -1,13 +1,8 @@
 import { Channel, connect } from "amqplib";
 import { random } from "lodash";
+import { wait } from "./wait";
 
 random();
-
-export function wait(timeout: number) {
-  return new Promise((res, _) => {
-    return setTimeout(res, timeout);
-  });
-}
 
 async function sendAmendOrder(channel: Channel, exchangeName: string) {
   const orderId = random(1000, 10000);
